@@ -42,7 +42,7 @@ export const createNote = async (
   return data;
 };
 
-export const deleteNote = async (id: string): Promise<Note> => {
+export const deleteNote = async (id: number): Promise<Note> => {
   const { data } = await axios.delete<Note>(`${API}/notes/${id}`, { headers });
   return data;
 };
