@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useDebounce } from '../../hooks/useDebounce';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '../../services/noteService';
 import NoteList from '../NoteList/NoteList';
 import SearchBox from '../SearchBox/SearchBox';
-import Pagination from '../Pagination/Paggination';
+import Pagination from '../Pagination/Pagination';
 import NoteForm from '../NoteForm/NoteForm';
 import Modal from '../Modal/Modal';
 import css from './App.module.css';
@@ -19,6 +19,7 @@ export default function App() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['notes', page, debouncedSearch],
     queryFn: () => fetchNotes(page, debouncedSearch),
+    placeholderData: keepPreviousData,
   });
 
   const handleOpenModal = () => setIsModalOpen(true);

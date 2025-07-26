@@ -1,16 +1,14 @@
 export type NoteTag = 'Todo' | 'Work' | 'Personal' | 'Meeting' | 'Shopping';
 
 export interface Note {
-  id: string;
+  id: number;
   title: string;
   content: string;
   tag: NoteTag;
+  createdAd: string;
+  updatedAt: string;
 }
 
-export interface FetchNotesResponse {
-  notes: Note[];
-  totalPages: number;
-}
 
 export interface NewNote {
   title: string;

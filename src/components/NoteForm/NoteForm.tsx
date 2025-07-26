@@ -1,7 +1,7 @@
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import css from './NoteForm.module.css';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createNote } from '../../services/noteService';
 import type { NewNote, NoteTag } from '../../types/note';
 
@@ -25,23 +25,25 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
   
   const queryClient = useQueryClient();
 
-  const handleSubmit = async (values: NewNote) => {
-    try {
-      await createNote(values); // токен береться в середині noteService
+  const mutation = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['notes'] });
       onSuccess();
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unexpected error';
-      console.error('Create note error:', errorMessage);
-      alert(`⚠️ Failed to create note: ${errorMessage}`);
+    },
+    onError: error => {
+      const message = error instanceof Error ? error.message : 'Unexpected error';
+      console.error('Create note error:', message);
+      alert(`⚠️ Failed to create note: ${message}`);
+
     }
-  };
+  });
 
   return (
     <Formik
       initialValues={{ title: '', content: '', tag: 'Todo' }}
       validationSchema={validationSchema}
-      onSubmit={handleSubmit}
+      onSubmit={(values: NewNote) => mutation.mutate(values)}
     >
       {({ isSubmitting }) => (
         <Form className={css.form}>
@@ -79,7 +81,7 @@ export default function NoteForm({ onSuccess }: NoteFormProps) {
             <button type="button" onClick={onSuccess} className={css.cancelButton}>
               Cancel
             </button>
-            <button type="submit" disabled={isSubmitting} className={css.submitButton}>
+            <button type="submit" disabled={isSubmitting || mutation.isPending} className={css.submitButton}>
               Create note
             </button>
           </div>
