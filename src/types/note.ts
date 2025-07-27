@@ -5,7 +5,7 @@ export interface Note {
   title: string;
   content: string;
   tag: NoteTag;
-  createdAd: string;
+  createdAt: string;
   updatedAt: string;
 }
 
